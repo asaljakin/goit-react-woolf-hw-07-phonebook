@@ -1,15 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit';
+import {
+  addContactThunk,
+  delContactThunk,
+  getContactsThunk,
+} from './contactsThunk';
+import {
+  handleAddContact,
+  handleDelContact,
+  handleFulfilledContacts,
+  handlePending,
+  handleRejected,
+} from './contactsHandlers';
 
 const contactsSlice = createSlice({
   name: 'contacts',
-  initialState: { data: [] },
-  reducers: {
-    addContact: (state, { payload }) => {
-      state.data.push(payload);
-    },
-    delContact: (state, { payload }) => {
-      state.data = state.data.filter(el => el.id !== payload);
-    },
+  initialState: { contacts: [], isLoading: false, error: null },
+
+  extraReducers: builder => {
+    builder
+      .addCase(getContactsThunk.fulfilled, handleFulfilledContacts)
+      .addCase(addContactThunk.fulfilled, handleAddContact)
+      .addCase(delContactThunk.fulfilled, handleDelContact)
+      .addMatcher(action => action.type.endsWith('pending'), handlePending)
+      .addMatcher(action => action.type.endsWith('rejected'), handleRejected);
   },
 });
 

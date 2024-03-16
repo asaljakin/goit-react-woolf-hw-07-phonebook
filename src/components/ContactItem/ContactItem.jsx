@@ -1,30 +1,22 @@
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './ContactItem.module.css';
-import { filterSelector, contactsSelector } from 'store/selectors';
-import { delContact } from 'store/contactsSlice/contactsSlice';
+import { filteredContactsSelector } from 'store/selectors';
+import { delContactThunk } from 'store/contactsSlice/contactsThunk';
 
 export const ContactItem = () => {
-  const contacts = useSelector(contactsSelector);
-  const filter = useSelector(filterSelector);
-
+  const filteredContacts = useSelector(filteredContactsSelector);
   const dispatch = useDispatch();
-
-  const filteredContacts = filter
-    ? contacts.filter(({ name }) =>
-        name?.toUpperCase().includes(filter.toUpperCase())
-      )
-    : contacts;
 
   return (
     <>
-      {filteredContacts.map(({ id, name, number }) => {
+      {filteredContacts.map(({ id, name, phone }) => {
         return (
           <li className={styles.item} key={id}>
-            <p>{name + ' ' + number}</p>
+            <p>{name + ' ' + phone}</p>
             <button
               className={styles.btnItem}
               type="button"
-              onClick={() => dispatch(delContact(id))}
+              onClick={() => dispatch(delContactThunk(id))}
             >
               Delete
             </button>

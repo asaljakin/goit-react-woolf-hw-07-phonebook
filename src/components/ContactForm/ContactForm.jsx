@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import styles from './ContactForm.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'store/contactsSlice/contactsSlice';
 import { nanoid } from '@reduxjs/toolkit';
-import { contactsSelector } from 'store/selectors';
+import { selectContacts } from 'store/selectors';
+import { addContactThunk } from 'store/contactsSlice/contactsThunk';
 
 export const ContactForm = () => {
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
-  const contacts = useSelector(contactsSelector);
+  const [phone, setPhone] = useState('');
+  const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
 
   const handleSubmit = e => {
@@ -20,19 +20,19 @@ export const ContactForm = () => {
     if (hasContact) {
       alert(`${name} is already in contacts`);
     } else {
-      dispatch(addContact({ name, number, id: nanoid() }));
+      dispatch(addContactThunk({ name, phone, id: nanoid() }));
       reset();
     }
   };
 
   const reset = () => {
     setName('');
-    setNumber('');
+    setPhone('');
   };
 
   const handleChangeName = e => setName(e.target.value);
 
-  const handleChangeNumber = e => setNumber(e.target.value);
+  const handleChangeNumber = e => setPhone(e.target.value);
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -56,11 +56,11 @@ export const ContactForm = () => {
         <input
           className={styles.input}
           type="tel"
-          name="number"
+          name="phone"
           placeholder="Phone number"
           pattern="\+?\d{1,4}?[ .\-\s]?\(?\d{1,3}?\)?[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-          value={number}
+          value={phone}
           onChange={handleChangeNumber}
           required
         ></input>
